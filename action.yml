@@ -1,0 +1,45 @@
+name: "Vercel Preview URL with Status Polling"
+description: "Retrieve Vercel preview URL and poll for deployment status until ready"
+author: "Roy Bakker"
+branding:
+  icon: "activity"
+  color: "black"
+
+inputs:
+  vercel_token:
+    description: "Vercel API token"
+    required: true
+  vercel_team_id:
+    description: "Vercel team ID"
+    required: false
+  vercel_project_id:
+    description: "Vercel project ID"
+    required: true
+  max_timeout:
+    description: "Maximum timeout (in seconds) to wait for deployment"
+    required: false
+    default: "300"
+  deployment_ready_states:
+    description: "Comma-separated list of states that are considered ready"
+    required: false
+    default: "READY"
+  deployment_error_states:
+    description: "Comma-separated list of states that are considered errors"
+    required: false
+    default: "ERROR"
+  polling_interval:
+    description: "Interval (in seconds) between status checks"
+    required: false
+    default: "5"
+
+outputs:
+  preview_url:
+    description: "The URL of the Vercel preview deployment"
+  deployment_state:
+    description: "Current state of the deployment"
+  branch_alias:
+    description: "Branch alias URL (if available)"
+
+runs:
+  using: "node20"
+  main: "dist/index.js"
