@@ -21,13 +21,14 @@ jobs:
       # Add your Vercel deployment step here
 
       - name: Get Vercel Preview URL and wait for deployment
-        uses: RoyBkker/vercel-preview-url-poller@v1
+        uses: RoyBkker/github-action-vercel-preview-url-poller@v1
         id: vercel_deployment
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
           vercel_project_id: "prj_your_project_id"
           max_timeout: 300 # 5 minutes max
           polling_interval: 5 # Check every 5 seconds
+          deployment_error_states: "ERROR,CANCELLED"
 
       - name: Use the Preview URL
         run: |
