@@ -34680,7 +34680,7 @@ async function retrievePreviewUrl({ token, teamId, projectId }) {
 
   return {
     url: latestDeployment.url,
-    deploymentId: latestDeployment.id,
+    deploymentId: latestDeployment.uid,
     state: latestDeployment.state,
     branchAlias: latestDeployment.meta?.githubCommitRef
       ? `${latestDeployment.meta.githubCommitRef}.${
