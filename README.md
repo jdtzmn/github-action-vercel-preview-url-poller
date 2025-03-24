@@ -21,7 +21,7 @@ jobs:
       # Add your Vercel deployment step here
 
       - name: Get Vercel Preview URL and wait for deployment
-        uses: your-username/vercel-preview-url-poller@v1
+        uses: RoyBkker/vercel-preview-url-poller@v1
         id: vercel_deployment
         with:
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
