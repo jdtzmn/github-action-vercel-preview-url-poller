@@ -34614,7 +34614,30 @@ async function retrievePreviewUrl({ token, teamId, projectId }) {
   const baseUrl = "https://api.vercel.com";
 
   // Get the current branch name from the GitHub context
-  const branchName = github.context.ref.replace("refs/heads/", "");
+  //   const branchName = github.context.ref.replace("refs/heads/", "");
+  //   core.info(`Looking for deployments for branch: ${branchName}`);
+
+  // Get the correct branch name from GitHub context
+  // First check if a branch name override is provided
+  const searchBranchName = process.env.SEARCH_BRANCH_NAME || "";
+
+  // Determine the default branch name based on event type
+  let defaultGithubBranch;
+  if (
+    process.env.GITHUB_EVENT_NAME === "pull_request" ||
+    process.env.GITHUB_EVENT_NAME === "pull_request_target"
+  ) {
+    // For pull requests, use GITHUB_HEAD_REF (the source branch)
+    defaultGithubBranch = process.env.GITHUB_HEAD_REF;
+  } else {
+    // For other events, use GITHUB_REF but strip off refs/heads/ prefix
+    defaultGithubBranch = process.env.GITHUB_REF.replace("refs/heads/", "");
+  }
+
+  // Use the override if provided, otherwise use the default branch name
+  const branchName =
+    searchBranchName.length > 0 ? searchBranchName : defaultGithubBranch;
+
   core.info(`Looking for deployments for branch: ${branchName}`);
 
   // Set up headers with auth token
@@ -34626,7 +34649,6 @@ async function retrievePreviewUrl({ token, teamId, projectId }) {
   let apiUrl = `${baseUrl}/v6/deployments`;
   const params = new URLSearchParams({
     projectId: projectId,
-    state: "BUILDING,READY,ERROR",
     limit: "100",
   });
 
