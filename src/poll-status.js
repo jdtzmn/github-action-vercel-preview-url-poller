@@ -40,7 +40,7 @@ async function pollDeploymentStatus({
 
     // Make the API request
     const response = await axios.get(apiUrl, { headers });
-    currentState = response.data.state;
+    currentState = response.data.status;
 
     core.info(`Current state: ${currentState}`);
 

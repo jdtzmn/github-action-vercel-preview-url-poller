@@ -28,7 +28,7 @@ jobs:
           vercel_project_id: "prj_your_project_id"
           max_timeout: 300 # 5 minutes max
           polling_interval: 5 # Check every 5 seconds
-          deployment_error_states: "ERROR,CANCELLED"
+          deployment_error_states: "ERROR,CANCELED"
 
       - name: Use the Preview URL
         run: |
