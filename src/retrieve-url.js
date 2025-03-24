@@ -77,11 +77,7 @@ async function retrievePreviewUrl({ token, teamId, projectId }) {
     url: latestDeployment.url,
     deploymentId: latestDeployment.uid,
     state: latestDeployment.state,
-    branchAlias: latestDeployment.meta?.githubCommitRef
-      ? `${latestDeployment.meta.githubCommitRef}.${
-          latestDeployment.url.split(".")[1]
-        }.vercel.app`
-      : null,
+    branchAlias: latestDeployment.meta?.branchAlias,
   };
 }
 
