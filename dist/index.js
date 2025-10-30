@@ -30407,17 +30407,29 @@ async function retrievePreviewUrl({
     throw new Error(`No deployments found for branch: ${branchName}`);
   }
 
-  let deployment = null;
+  let deployment = undefined;
 
   // Try to find the deployment by matching the preview URL, if provided
   if (matchPreviewUrl) {
+    // Remove the protocol prefix from the URL
+    const exactMatch = matchPreviewUrl.startsWith("https://")
+      ? matchPreviewUrl.slice(8)
+      : matchPreviewUrl;
+
+    // Try to find the deployment with the exact URL match
     deployment = deployments.find(
-      (deployment) => deployment.url === matchPreviewUrl,
+      (deployment) => deployment.url === exactMatch,
     );
+
+    if (deployment === undefined) {
+      console.warn(
+        `No deployment found with exact URL match: ${exactMatch}. Falling back to most recent deployment.`,
+      );
+    }
   }
 
   // If no matching deployment is found, use the most recent deployment
-  if (deployment === null) {
+  if (deployment === undefined) {
     // Sort by createdAt to get the most recent deployment
     deployments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
     deployment = deployments[0];
