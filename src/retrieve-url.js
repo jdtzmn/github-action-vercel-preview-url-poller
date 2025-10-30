@@ -1,11 +1,15 @@
 const core = require("@actions/core");
-const github = require("@actions/github");
 const axios = require("axios");
 
 /**
  * Retrieves the preview URL from Vercel for the current branch
  */
-async function retrievePreviewUrl({ token, teamId, projectId }) {
+async function retrievePreviewUrl({
+  token,
+  teamId,
+  projectId,
+  matchPreviewUrl,
+}) {
   const baseUrl = "https://api.vercel.com";
 
   // Get the current branch name from the GitHub context
@@ -69,15 +73,27 @@ async function retrievePreviewUrl({ token, teamId, projectId }) {
     throw new Error(`No deployments found for branch: ${branchName}`);
   }
 
-  // Sort by createdAt to get the most recent deployment
-  deployments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-  const latestDeployment = deployments[0];
+  let deployment = null;
+
+  // Try to find the deployment by matching the preview URL, if provided
+  if (matchPreviewUrl) {
+    deployment = deployments.find(
+      (deployment) => deployment.url === matchPreviewUrl,
+    );
+  }
+
+  // If no matching deployment is found, use the most recent deployment
+  if (deployment === null) {
+    // Sort by createdAt to get the most recent deployment
+    deployments.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    deployment = deployments[0];
+  }
 
   return {
-    url: latestDeployment.url,
-    deploymentId: latestDeployment.uid,
-    state: latestDeployment.state,
-    branchAlias: latestDeployment.meta?.branchAlias,
+    url: deployment.url,
+    deploymentId: deployment.uid,
+    state: deployment.state,
+    branchAlias: deployment.meta?.branchAlias,
   };
 }
 
